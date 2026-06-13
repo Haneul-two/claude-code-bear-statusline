@@ -4,7 +4,7 @@ A bear-themed status line for [Claude Code](https://code.claude.com) — a tamag
 
 > 🇰🇷 한국어 설명은 [아래](#-한국어)에 있습니다.
 
-![bear status line](assets/statusline.png)
+![bear status line cycling through moods](assets/demo.gif)
 
 ```
  ∩─────∩     [Fable 5] | 💰 $1.23
