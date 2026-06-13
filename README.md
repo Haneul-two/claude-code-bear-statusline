@@ -1,10 +1,10 @@
 # 🐻 claude-code-bear-statusline
 
+![bear status line cycling through moods](assets/demo.gif)
+
 A bear-themed status line for [Claude Code](https://code.claude.com) — a tamagotchi-style bear whose **mood changes randomly every minute** (3-line layout with ears and paws!), shown next to your model name, session cost, 5-hour session limit (with reset time) and weekly limit (with reset date).
 
 > 🇰🇷 한국어 설명은 [아래](#-한국어)에 있습니다.
-
-![bear status line cycling through moods](assets/demo.gif)
 
 ```
  ∩─────∩     [Fable 5] | 💰 $1.23
