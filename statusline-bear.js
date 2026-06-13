@@ -16,8 +16,33 @@ process.stdin.on('end', () => {
     CYAN = '\x1b[36m', MAGENTA = '\x1b[35m', DIM = '\x1b[2m', RESET = '\x1b[0m';
 
   const pctColor = (p) => (p >= 90 ? RED : p >= 70 ? YELLOW : GREEN);
-  const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
   const pad2 = (n) => String(n).padStart(2, '0');
+
+  // ── 언어: BEAR_LANG(ko|en)이 우선, 없으면 로케일 환경변수에서 추정, 기본 영어.
+  const I18N = {
+    ko: {
+      session: '세션', weekly: '주간',
+      days: ['일', '월', '화', '수', '목', '금', '토'],
+      timeReset: (hh, mm) => `${hh}:${mm} 초기화`,
+      weekReset: (m, d, day) => `${m}/${d}(${day}) 초기화`,
+    },
+    en: {
+      session: 'session', weekly: 'weekly',
+      days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      timeReset: (hh, mm) => `resets ${hh}:${mm}`,
+      weekReset: (m, d, day) => `resets ${day} ${m}/${d}`,
+    },
+  };
+  const lang = (() => {
+    const explicit = (process.env.BEAR_LANG || '').toLowerCase();
+    if (explicit.startsWith('ko')) return 'ko';
+    if (explicit.startsWith('en')) return 'en';
+    const loc = (process.env.LC_ALL || process.env.LC_MESSAGES ||
+      process.env.LANG || process.env.LANGUAGE || '').toLowerCase();
+    if (loc.startsWith('ko') || loc.includes('korean')) return 'ko';
+    return 'en';
+  })();
+  const t = I18N[lang];
 
   // ── 곰의 기분: 한도와 무관하게 랜덤. 매 실행마다 바뀌면 깜빡거리므로
   //    시간 버킷(MOOD_INTERVAL_MS) + 세션 ID를 시드로 써서 버킷 안에서는 같은 기분 유지.
@@ -58,9 +83,9 @@ process.stdin.on('end', () => {
     let reset = '';
     if (fiveH.resets_at) {
       const d = new Date(fiveH.resets_at * 1000);
-      reset = ` ${DIM}(${pad2(d.getHours())}:${pad2(d.getMinutes())} 초기화)${RESET}`;
+      reset = ` ${DIM}(${t.timeReset(pad2(d.getHours()), pad2(d.getMinutes()))})${RESET}`;
     }
-    info2 = `⏳ 세션 ${pctColor(p)}${p}%${RESET}${reset}`;
+    info2 = `⏳ ${t.session} ${pctColor(p)}${p}%${RESET}${reset}`;
   }
 
   let info3 = '';
@@ -70,9 +95,9 @@ process.stdin.on('end', () => {
     let reset = '';
     if (week.resets_at) {
       const d = new Date(week.resets_at * 1000);
-      reset = ` ${DIM}(${d.getMonth() + 1}/${d.getDate()}(${DAYS[d.getDay()]}) 초기화)${RESET}`;
+      reset = ` ${DIM}(${t.weekReset(d.getMonth() + 1, d.getDate(), t.days[d.getDay()])})${RESET}`;
     }
-    info3 = `📅 주간 ${pctColor(p)}${p}%${RESET}${reset}`;
+    info3 = `📅 ${t.weekly} ${pctColor(p)}${p}%${RESET}${reset}`;
   }
 
   // ── 곰 열을 고정 폭으로 맞추고 옆에 정보를 붙인다 (곰 글자는 전부 폭 1)
