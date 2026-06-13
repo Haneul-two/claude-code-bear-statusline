@@ -1,4 +1,4 @@
-// 곰 상태표시줄: 곰 표정(감정) | 모델명 | 세션 비용 | 5시간 한도(초기화 시각) | 주간 한도(초기화 날짜)
+// 곰 상태표시줄(3줄): 곰 귀 / 곰 표정(감정) / 모델명 | 세션 비용 | 5시간 한도 | 주간 한도
 // settings.json의 statusLine 명령으로 실행되며, stdin으로 세션 JSON을 받는다.
 let input = '';
 process.stdin.on('data', (chunk) => (input += chunk));
@@ -25,22 +25,27 @@ process.stdin.on('end', () => {
   // 곰의 감정: 세션·주간 한도 중 더 높은 사용률 기준. 한도 정보가 오기 전엔 기본 표정.
   const sessionPct = data.rate_limits?.five_hour?.used_percentage;
   const weekPct = data.rate_limits?.seven_day?.used_percentage;
-  let bear;
+  let eyes, mood, color = '';
   if (data.exceeds_200k_tokens) {
-    bear = `${RED}ʕ@ᴥ@ʔ${RESET} ${DIM}과부하${RESET}`; // 컨텍스트 한계 — 눈이 핑핑
+    eyes = '@ᴥ@'; mood = '과부하…'; color = RED; // 컨텍스트 한계 — 눈이 핑핑
   } else if (sessionPct == null && weekPct == null) {
-    bear = 'ʕ•ᴥ•ʔ'; // 아직 한도 정보 없음 — 기본 표정
+    eyes = '•ᴥ•'; mood = ''; // 아직 한도 정보 없음 — 기본 표정
   } else {
     const worst = Math.max(sessionPct ?? 0, weekPct ?? 0);
-    bear =
-      worst >= 90 ? `${RED}ʕ;ᴥ;ʔ${RESET} ${DIM}비상${RESET}`
-      : worst >= 70 ? `${YELLOW}ʕ´•ᴥ•\`ʔ${RESET} ${DIM}긴장${RESET}`
-      : worst >= 40 ? `ʕ•ᴥ•ʔ ${DIM}평온${RESET}`
-      : `${GREEN}ʕ◕ᴥ◕ʔ${RESET} ${DIM}여유${RESET}`;
+    if (worst >= 90) { eyes = ';ᴥ;'; mood = '비상!!'; color = RED; }
+    else if (worst >= 70) { eyes = '´•ᴥ•`'; mood = '긴장…'; color = YELLOW; }
+    else if (worst >= 40) { eyes = '•ᴥ•'; mood = '평온'; }
+    else { eyes = '◕ᴥ◕'; mood = '여유~'; color = GREEN; }
   }
 
+  // 귀 줄은 표정 폭에 맞춰 늘어난다 (긴장 표정은 눈썹 때문에 더 넓음)
+  const ears = ` ∩${'─'.repeat(eyes.length + 2)}∩`;
+  const face = `ʕ  ${eyes}  ʔ`;
+  console.log(`${color}${ears}${RESET}`);
+  console.log(`${color}${face}${RESET}${mood ? ` ${DIM}${mood}${RESET}` : ''}`);
+
   const parts = [
-    `${bear} ${CYAN}[${model}]${RESET}`,
+    `${CYAN}[${model}]${RESET}`,
     `💰 $${cost.toFixed(2)}`,
   ];
 
