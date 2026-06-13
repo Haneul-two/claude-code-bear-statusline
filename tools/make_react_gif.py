@@ -45,10 +45,17 @@ def render(sess, week, cost, mi):
                         (f"{week}%", mono, pct_color(week), False), ("  (resets Thu 6/18)", mono, DIM, False)])
     return img.convert("RGB")
 
-frames = [render(*f) for f in SEQ]
 # slower than the random demo so the progression reads; hold first & last longer
-durations = [1700] + [950] * (len(frames) - 2) + [2200]
-out = os.path.join(HERE, "assets", "demo-react.gif")
-frames[0].save(out, save_all=True, append_images=frames[1:],
-               duration=durations, loop=0, optimize=True)
-print("wrote", out, "frames:", len(frames))
+DURATIONS = [1700] + [950] * (len(SEQ) - 2) + [2200]
+
+
+def build_default():
+    frames = [render(*f) for f in SEQ]
+    out = os.path.join(HERE, "assets", "demo-react.gif")
+    frames[0].save(out, save_all=True, append_images=frames[1:],
+                   duration=DURATIONS, loop=0, optimize=True)
+    print("wrote", out, "frames:", len(frames))
+
+
+if __name__ == "__main__":
+    build_default()
