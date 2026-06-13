@@ -63,7 +63,22 @@ process.stdin.on('end', () => {
   const seedStr = `${bucket}:${data.session_id || ''}`;
   let h = 0;
   for (const ch of seedStr) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  const mood = MOODS[h % MOODS.length];
+
+  // BEAR_MOOD=react: 기분을 한도 사용률에 연동(여유→신남, 한도 근접→울상). 기본은 random.
+  //   react라도 한도 정보가 아직 없으면 random으로 폴백. 밴드 안에서는 같은 시드로 무작위.
+  const reactMood = (process.env.BEAR_MOOD || '').toLowerCase().startsWith('react');
+  const usages = [data.rate_limits?.five_hour, data.rate_limits?.seven_day]
+    .map((r) => (r && r.used_percentage != null ? r.used_percentage : null))
+    .filter((v) => v != null);
+  let mood;
+  if (reactMood && usages.length) {
+    const max = Math.max(...usages);
+    // 인덱스는 MOODS 기준: 0 신남,1 행복,2 윙크,3 평온,4 졸림,5 깜짝,6 어지러움,7 시무룩,8 눈물,9 심통
+    const band = max >= 90 ? [8, 9] : max >= 70 ? [7, 5, 6] : max >= 40 ? [3, 4] : [0, 1, 2];
+    mood = MOODS[band[h % band.length]];
+  } else {
+    mood = MOODS[h % MOODS.length];
+  }
 
   // ── 곰 3줄: 귀 / 얼굴 / 앞발. 귀는 표정 폭에 맞춰 늘어난다.
   const ears = ` ∩${'─'.repeat(mood.eyes.length + 2)}∩`;
