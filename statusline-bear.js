@@ -23,16 +23,16 @@ process.stdin.on('end', () => {
   //    시간 버킷(MOOD_INTERVAL_MS) + 세션 ID를 시드로 써서 버킷 안에서는 같은 기분 유지.
   const MOOD_INTERVAL_MS = 60 * 1000; // 1분마다 기분 전환
   const MOODS = [
-    { eyes: '◕ᴥ◕', word: '신남', color: GREEN },
-    { eyes: '≧ᴥ≦', word: '행복', color: GREEN },
-    { eyes: '-ᴥ◕', word: '윙크', color: MAGENTA },
-    { eyes: '•ᴥ•', word: '평온', color: '' },
-    { eyes: '-ᴥ-', word: '졸림', color: DIM },
-    { eyes: '◉ᴥ◉', word: '깜짝', color: YELLOW },
-    { eyes: '@ᴥ@', word: '어지러움', color: YELLOW },
-    { eyes: '´•ᴥ•`', word: '시무룩', color: YELLOW },
-    { eyes: ';ᴥ;', word: '눈물', color: CYAN },
-    { eyes: 'òᴥó', word: '심통', color: RED },
+    { eyes: '◕ᴥ◕', color: GREEN },   // 신남
+    { eyes: '≧ᴥ≦', color: GREEN },   // 행복
+    { eyes: '-ᴥ◕', color: MAGENTA }, // 윙크
+    { eyes: '•ᴥ•', color: '' },      // 평온
+    { eyes: '-ᴥ-', color: DIM },     // 졸림
+    { eyes: '◉ᴥ◉', color: YELLOW }, // 깜짝
+    { eyes: '@ᴥ@', color: YELLOW },  // 어지러움
+    { eyes: '´•ᴥ•`', color: YELLOW }, // 시무룩
+    { eyes: ';ᴥ;', color: CYAN },    // 눈물
+    { eyes: 'òᴥó', color: RED },     // 심통
   ];
   const bucket = Math.floor(Date.now() / MOOD_INTERVAL_MS);
   const seedStr = `${bucket}:${data.session_id || ''}`;
@@ -50,7 +50,7 @@ process.stdin.on('end', () => {
   const cost = data.cost?.total_cost_usd || 0;
   const info1 = `${CYAN}[${model}]${RESET} | 💰 $${cost.toFixed(2)}`;
 
-  let info2 = `${mood.color}${mood.word}${RESET}`;
+  let info2 = '';
   // rate_limits는 Pro/Max 구독자에게 첫 API 응답 이후에만 들어온다
   const fiveH = data.rate_limits?.five_hour;
   if (fiveH && fiveH.used_percentage != null) {
@@ -60,7 +60,7 @@ process.stdin.on('end', () => {
       const d = new Date(fiveH.resets_at * 1000);
       reset = ` ${DIM}(${pad2(d.getHours())}:${pad2(d.getMinutes())} 초기화)${RESET}`;
     }
-    info2 += ` | ⏳ 세션 ${pctColor(p)}${p}%${RESET}${reset}`;
+    info2 = `⏳ 세션 ${pctColor(p)}${p}%${RESET}${reset}`;
   }
 
   let info3 = '';
@@ -81,6 +81,6 @@ process.stdin.on('end', () => {
   const padCol = (s) => s + ' '.repeat(Math.max(0, COL - stripAnsi(s).length));
 
   console.log(padCol(`${mood.color}${ears}${RESET}`) + info1);
-  console.log(padCol(`${mood.color}${face}${RESET}`) + info2);
+  console.log(info2 ? padCol(`${mood.color}${face}${RESET}`) + info2 : `${mood.color}${face}${RESET}`);
   console.log(info3 ? padCol(`${mood.color}${body}${RESET}`) + info3 : `${mood.color}${body}${RESET}`);
 });
