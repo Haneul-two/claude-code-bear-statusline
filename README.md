@@ -49,6 +49,24 @@ A bear-themed status line for Claude Code — a tamagotchi-style bear whose **mo
 
 요구사항: [Node.js](https://nodejs.org) (의존성 패키지 없음, 스크립트 파일 하나면 됩니다)
 
+### 원클릭 설치
+
+터미널에서 한 줄만 실행하면 됩니다. 스크립트를 `~/.claude/`에 내려받고 `settings.json`의 `statusLine` 항목만 추가합니다 (기존 설정은 그대로 보존).
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/Haneul-two/claude-code-bear-statusline/main/install.ps1 | iex
+```
+
+**macOS / Linux:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/Haneul-two/claude-code-bear-statusline/main/install.sh | bash
+```
+
+설치 후 Claude Code를 재시작하면 곰이 나타납니다.
+
+### 수동 설치
+
 1. `statusline-bear.js`를 원하는 위치에 저장합니다. 예: `~/.claude/statusline-bear.js`
 
 2. `~/.claude/settings.json`에 statusLine 설정을 추가합니다.
