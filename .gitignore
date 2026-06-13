@@ -1,0 +1,7 @@
+# Python (asset-generation tools)
+__pycache__/
+*.pyc
+
+# scratch / temp asset frames
+assets/_*.png
+tools/_*.md
