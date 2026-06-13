@@ -5,8 +5,15 @@
 & {
   $ErrorActionPreference = 'Stop'
 
+  # 로케일이 한국어면 한국어, 아니면 영어 메시지 (Korean locale -> Korean, else English)
+  $ko = (Get-Culture).Name -like 'ko*'
+
   if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
-    Write-Host 'Node.js가 필요합니다. https://nodejs.org 에서 설치 후 다시 실행해 주세요.' -ForegroundColor Red
+    if ($ko) {
+      Write-Host 'Node.js가 필요합니다. https://nodejs.org 에서 설치 후 다시 실행해 주세요.' -ForegroundColor Red
+    } else {
+      Write-Host 'Node.js is required. Install it from https://nodejs.org and run again.' -ForegroundColor Red
+    }
     return
   }
 
@@ -36,6 +43,11 @@
 
   Write-Host ''
   Write-Host ' ∩─────∩' -ForegroundColor Green
-  Write-Host 'ʕ  ◕ᴥ◕  ʔ  설치 완료!' -ForegroundColor Green
-  Write-Host ' (  u u  )  Claude Code를 재시작하면 곰이 나타납니다.' -ForegroundColor Green
+  if ($ko) {
+    Write-Host 'ʕ  ◕ᴥ◕  ʔ  설치 완료!' -ForegroundColor Green
+    Write-Host ' (  u u  )  Claude Code를 재시작하면 곰이 나타납니다.' -ForegroundColor Green
+  } else {
+    Write-Host 'ʕ  ◕ᴥ◕  ʔ  Done!' -ForegroundColor Green
+    Write-Host ' (  u u  )  Restart Claude Code and the bear appears.' -ForegroundColor Green
+  }
 }
