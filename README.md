@@ -117,6 +117,9 @@ On Windows, set it in your environment or wrap with `cmd /c "set BEAR_LANG=ko &&
 
 By default the mood is **purely random** (`BEAR_MOOD=random`). Set `BEAR_MOOD=react` to make the bear **react to your usage** instead — the higher your session/weekly limit usage, the more worried the bear gets:
 
+![bear reacting to rising usage](assets/demo-react.gif)
+
+
 | Usage (max of session / weekly) | Mood |
 |---|---|
 | 0–40% | excited / happy / wink |
