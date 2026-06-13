@@ -79,8 +79,12 @@ def render(eyes, color):
                         ("81%", mono, YELLOW, False), ("  (resets Thu 6/18)", mono, DIM, False)])
     return img.convert("RGB")
 
-frames = [render(eyes, color) for eyes, color in MOODS]
-frames[0].save(OUT_PNG)
-frames[0].save(OUT_GIF, save_all=True, append_images=frames[1:],
-               duration=750, loop=0, optimize=True)
-print("wrote", OUT_GIF, "and", OUT_PNG, "frames:", len(frames))
+def build_default():
+    frames = [render(eyes, color) for eyes, color in MOODS]
+    frames[0].save(OUT_GIF, save_all=True, append_images=frames[1:],
+                   duration=750, loop=0, optimize=True)
+    print("wrote", OUT_GIF, "frames:", len(frames))
+
+
+if __name__ == "__main__":
+    build_default()
